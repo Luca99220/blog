@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ms_tag" />
+        <module name="ms-auth" />
+        <module name="ms-post" />
+        <module name="ms-comment" />
+        <module name="ms-discovery" />
+        <module name="banner" />
+        <module name="myblog" />
+        <module name="ms-rating" />
+        <module name="ms-gateway" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="banner" options="-parameters" />
+      <module name="ms-auth" options="-parameters" />
+      <module name="ms-comment" options="-parameters" />
+      <module name="ms-discovery" options="-parameters" />
+      <module name="ms-gateway" options="-parameters" />
+      <module name="ms-post" options="-parameters" />
+      <module name="ms-rating" options="-parameters" />
+      <module name="ms_tag" options="-parameters" />
+      <module name="myblog" options="-parameters" />
+    </option>
+  </component>
+</project>

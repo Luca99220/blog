@@ -1,0 +1,153 @@
+server:
+  port: 0
+  servlet:
+    #http://localhost:8060/ms-post
+    context-path: /ms-post
+
+spring:
+  application:
+    name: ms-post
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOSTNAME}:${MYSQL_PORT}/${MYSQL_DATABASE_NAME}?ssl-mode=REQUIRED
+    #url: jdbc:mariadb://${MYSQL_HOSTNAME}:${MYSQL_PORT}/${MYSQL_DATABASE_NAME}?ssl-mode=REQUIRED
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #driver-class-name: org.mariadb.jdbc.Driver
+
+
+  jpa:
+    hibernate:
+      # ddl-auto values:
+      # create-drop -> creazione del db all'all'avvio dell'applicazione e distruzione del db alla chiusura dell'appliocazione
+      # update -> aggiorna il db con le tabelle 'nuove', modifica quelle attuali, non elimina eventuali colonne che non esistono più
+      # validated -> confronta le entità con le tabelle e solleva eccezioni se ci sono incongruenze
+      # none: non viene fatto nulla (da usarte assolutamente in produzione)
+      ddl-auto: update
+    properties:
+      dialect: org.hibernate.dialect.MySQLDialect
+      #dialect: org.hibernate.dialect.MariaDBDialect
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+    show-sql: true
+    open-in-view: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    # username -> equivale alla email senza @gmail.com
+    username: ${MAIL_USERNAME}
+    #password -> non la vera pw ma quella generata fa google per l'utilizzo di app terze parti
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            required: true
+
+logging:
+  level:
+    it.cgmconsulting.mspost: info
+    org.hibernate.orm.jdbc.bind: trace
+    org.springframework: info
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    leaseRenewalIntervalInSeconds: 5
+  client:
+    register-with-eureka: true
+    service-url:
+      default-zone: localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health,endpoints
+  health:
+    circuit-breakers:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+  info:
+    java.enabled: true
+    os.enabled: true
+  otlp:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  tracing:
+    sampling:
+      probability: 1.0
+
+resilience4j.circuitbreaker:
+  instances:
+    a-tempo: #nomi arbitrari per le istanze dei controlli
+      register-health-indicator: true
+      # Apertura del circuito se la request impiega più tempo di quanto stimato
+      sliding-window-type: TIME_BASED
+      # Numero di tentativi di request
+      sliding-window-size: 1
+      # Soglia - in percentuale - di fallimenti (se al 100%, basta che la chiamata al microservizio fallisca una volta sola)
+      slow-call-rate-threshold: 100
+      # Un'interazione è considerata lenta se impiega più di n secondi a rispondere
+      slow-call-duration-threshold: 2s
+      # Tempo per passare dallo stato di OPEN a HALF_OPEN
+      wait-duration-in-open-state: 60s
+      minimum-number-of-calls: 1
+      # Numero massimo di request permesse in stato HALF_OPEN
+      permitted-number-of-calls-in-half-open-state: 1
+      automatic-transition-from-open-to-half-open-enabled: true
+    a-tempo-tags: #nomi arbitrari per le istanze dei controlli
+      register-health-indicator: true
+      # Apertura del circuito se la request impiega più tempo di quanto stimato
+      sliding-window-type: TIME_BASED
+      # Numero di tentativi di request
+      sliding-window-size: 1
+      # Soglia - in percentuale - di fallimenti (se al 100%, basta che la chiamata al microservizio fallisca una volta sola)
+      slow-call-rate-threshold: 100
+      # Un'interazione è considerata lenta se impiega più di n secondi a rispondere
+      slow-call-duration-threshold: 2s
+      # Tempo per passare dallo stato di OPEN a HALF_OPEN
+      wait-duration-in-open-state: 60s
+      minimum-number-of-calls: 1
+      # Numero massimo di request permesse in stato HALF_OPEN
+      permitted-number-of-calls-in-half-open-state: 1
+      automatic-transition-from-open-to-half-open-enabled: true
+    a-tempo-ratings: #nomi arbitrari per le istanze dei controlli
+      register-health-indicator: true
+      # Apertura del circuito se la request impiega più tempo di quanto stimato
+      sliding-window-type: TIME_BASED
+      # Numero di tentativi di request
+      sliding-window-size: 1
+      # Soglia - in percentuale - di fallimenti (se al 100%, basta che la chiamata al microservizio fallisca una volta sola)
+      slow-call-rate-threshold: 100
+      # Un'interazione è considerata lenta se impiega più di n secondi a rispondere
+      slow-call-duration-threshold: 2s
+      # Tempo per passare dallo stato di OPEN a HALF_OPEN
+      wait-duration-in-open-state: 60s
+      minimum-number-of-calls: 1
+      # Numero massimo di request permesse in stato HALF_OPEN
+      permitted-number-of-calls-in-half-open-state: 1
+      automatic-transition-from-open-to-half-open-enabled: true
+    a-tentativi: #nome seconda istanza arbitrario
+      register-health-indicator: true
+      # Apertura del circuito se la request fallisce n volte
+      sliding-window-type: COUNT_BASED
+      # Numero di tentativi di request
+      sliding-window-size: 1
+      # Soglia - in percentuale - di fallimenti (se al 100%, basta che la chiamata al microservizio fallisca una volta sola)
+      failure-rate-threshold: 100
+      wait-duration-in-open-state: 60s
+      permitted-number-of-calls-in-half-open-state: 1
+      automatic-transition-from-open-to-half-open-enabled: true
+
+# CUSTOM PROPERTIES
+application:
+  security:
+    token: ${TOKEN}
+    internalToken: ${INTERNAL_TOKEN}

@@ -1,0 +1,39 @@
+package it.cgmconsulting.ms_tag.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.Set;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Tag {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    private int id;
+
+    @Column(unique = true, nullable = false, length = 20)
+    private String tagName;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "postTagId.tag", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<PostTag> posts;
+
+    public Tag(String tagName) {
+        this.tagName = tagName;
+    }
+
+}
